@@ -1,12 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const chat = require('./chatConnection');
 
 const authRoute = require('./routes/auth');
-const postRoute = require('./routes/posts');
+const userRoute = require('./routes/user');
+const chatRoute = require('./routes/chat');
 
 const app = express();
 const port = 3333;
+
 app.use(cors());
 
 mongoose.Promise = global.Promise;
@@ -26,7 +29,8 @@ mongoose.connect('mongodb://localhost:27017/studygo', {
 
 app.use(express.json());
 
-app.use('/api/user', authRoute);
-app.use('/api/post', postRoute);
+app.use('/api/auth', authRoute);
+app.use('/api/user', userRoute);
+app.use('/api/chat', chatRoute);
 
 app.listen(port, () => console.log(`App listening on port ${port}!`))
