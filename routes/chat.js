@@ -13,6 +13,12 @@ router.post('/dialog', async (req, res) => {
     await newDialog.save();
 })
 
+router.get('/dialog/', async (req, res) => {
+    Dialog.find({users: req.query.userId}).then(mess => {
+        res.json(mess)
+    }) 
+ })
+
 router.post('/message', async (req, res) => {
     const newMessage = new Message({
         dialogId: req.body.dialogId,
@@ -25,8 +31,8 @@ router.post('/message', async (req, res) => {
     await newMessage.save();
 })
 
-router.post('/getMessages', async (req, res) => {
-   Message.find({dialogId: req.body.dialogId}).then(mess => {
+router.get('/message/', async (req, res) => {
+   Message.find({dialogId: req.query.dialogId}).then(mess => {
        res.json(mess)
    })
 })
