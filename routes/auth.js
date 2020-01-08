@@ -43,7 +43,9 @@ const saveTeacher = async (userId, data) => {
 
 router.post('/register', async (req, res) => {
     if (req.body.role === 0) {
-        const { error } = await registerValidation(req.body);
+        const {
+            error
+        } = await registerValidation(req.body);
 
         if (error) return res.status(400).send(error.details[0].message);
 
@@ -75,11 +77,18 @@ router.post('/register', async (req, res) => {
         await newUser.save();
         await saveStudent(newUser._id, student);
 
-        const token = jwt.sign({ _id: newUser._id }, process.env.TOKEN_SECRET);
-        res.json({ token });
+        const token = jwt.sign({
+            _id: newUser._id
+        }, process.env.TOKEN_SECRET);
+        res.json({
+            newUser,
+            token
+        });
 
     } else if (req.body.role === 1) {
-        const { error } = await registerValidation(req.body);
+        const {
+            error
+        } = await registerValidation(req.body);
 
         if (error) return res.status(400).send(error.details[0].message);
 
@@ -109,8 +118,13 @@ router.post('/register', async (req, res) => {
         await newUser.save();
         await saveTeacher(newUser._id, teacher);
 
-        const token = jwt.sign({ _id: newUser._id }, process.env.TOKEN_SECRET);
-        res.json({ token });
+        const token = jwt.sign({
+            _id: newUser._id
+        }, process.env.TOKEN_SECRET);
+        res.json({
+            newUser,
+            token
+        });
     } else {
         res.send("role error");
     }
