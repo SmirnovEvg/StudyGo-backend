@@ -13,9 +13,9 @@ router.post('/dialog', async (req, res) => {
     await newDialog.save();
 })
 
-router.get('/dialog/', async (req, res) => {
-    Dialog.find({users: req.query.userId}).then(mess => {
-        res.json(mess)
+router.get('/dialog/', (req, res) => {
+    Dialog.find({users: req.query.userId}).then(data => {
+        res.json(data)
     }) 
  })
 
@@ -27,13 +27,12 @@ router.post('/message', async (req, res) => {
         chatMessageUser: req.body.chatMessageUser
     })
     res.send(newMessage);
-
     await newMessage.save();
 })
 
-router.get('/message/', async (req, res) => {
-   Message.find({dialogId: req.query.dialogId}).then(mess => {
-       res.json(mess)
+router.get('/message/', (req, res) => {
+   Message.find({dialogId: req.query.dialogId}).then(data => {
+       res.json(data)
    })
 })
 
