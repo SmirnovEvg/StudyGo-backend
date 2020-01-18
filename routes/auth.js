@@ -19,8 +19,6 @@ dotenv.config();
 const saveStudent = async (userId, data) => {
     const student = new Student({
         userId,
-        firstName: data.firstName,
-        secondName: data.secondName,
         course: data.course,
         group: data.group,
     })
@@ -31,9 +29,6 @@ const saveStudent = async (userId, data) => {
 const saveTeacher = async (userId, data) => {
     const teacher = new Teacher({
         userId,
-        firstName: data.firstName,
-        secondName: data.secondName,
-        thirdName: data.thirdName,
         department: data.department,
         rank: data.rank,
     })
@@ -68,9 +63,11 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
         const newUser = new User({
-            userId: student._id,
-            studnumber: req.body.studnumber, //body
-            password: hashedPassword, //body
+            studnumber: req.body.studnumber,
+            password: hashedPassword,
+            firstName: student.firstName,
+            secondName: student.secondName,
+            thirdName: student.thirdName,
             role: req.body.role
         })
 
@@ -109,9 +106,11 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
         const newUser = new User({
-            userId: teacher._id,
             studnumber: req.body.studnumber, //body
             password: hashedPassword, //body
+            firstName: teacher.firstName,
+            secondName: teacher.secondName,
+            thirdName: teacher.thirdName,
             role: req.body.role
         })
 
@@ -132,37 +131,23 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-
     //Checking if the user exists
     const user = await User.findOne({
         studnumber: req.body.studnumber
     });
+    
     if (!user) return res.status(400).send('Неверный логин или пароль');
 
     //Password is correct
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).send('Неверный логин или пароль');
 
-    if (req.body.role === 0) {
-        const student = await Student.findOne({
-            userId: user._id
-        });
+    if (req.body.role === user.role) {
         const token = jwt.sign({
             _id: user._id
         }, process.env.TOKEN_SECRET); //.env TOKEN_SECRET
         res.json({
-            student,
-            token
-        });
-    } else if (req.body.role === 1) {
-        const teacher = await Teacher.findOne({
-            userId: user._id
-        });
-        const token = jwt.sign({
-            _id: user._id
-        }, process.env.TOKEN_SECRET); //.env TOKEN_SECRET
-        res.json({
-            teacher,
+            user,
             token
         });
     }

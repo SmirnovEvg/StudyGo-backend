@@ -9,6 +9,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    firstName: {
+        type: String,
+        required: true
+    },
+    secondName: {
+        type: String,
+        required: true
+    },
+    thirdName: {
+        type: String,
+        required: true
+    },
     role: {
         type: Number,
         required: true

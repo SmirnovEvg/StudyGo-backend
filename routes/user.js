@@ -16,17 +16,4 @@ router.get('/', verify, async (req, res) => {
     }
 });
 
-router.get('/dialog', async (req, res) => {
-    const user = await User.findOne({_id: req.query._id});
-    if(user.role === 0){
-        const student = await Student.findOne({userId: user._id});
-        res.json({student});
-    }
-    else if(user.role === 1){
-        const teacher = await Teacher.findOne({userId: user._id});
-        res.json({teacher});
-    }
-    
-})
-
 module.exports = router;

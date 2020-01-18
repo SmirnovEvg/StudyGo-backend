@@ -14,7 +14,8 @@ router.post('/dialog', async (req, res) => {
 })
 
 router.get('/dialog/', (req, res) => {
-    Dialog.find({users: req.query.userId}).then(data => {
+    Dialog.find({users: req.query.userId}).populate('users')
+    .then(data => {
         res.json(data)
     }) 
  })

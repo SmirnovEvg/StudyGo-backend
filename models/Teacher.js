@@ -6,18 +6,6 @@ const teacherSchema = new mongoose.Schema({
         required: true,
         ref: "User"
     },
-    firstName: {
-        type: String,
-        required: true
-    },
-    secondName: {
-        type: String,
-        required: true
-    },
-    thirdName: {
-        type: String,
-        required: true
-    },
     department: {
         type: String,
         required: true

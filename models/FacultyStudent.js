@@ -13,6 +13,10 @@ const facultyStudentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    thirdName: {
+        type: String,
+        required: true
+    },
     course: {
         type: Number,
         required: true,
