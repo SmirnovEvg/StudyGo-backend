@@ -14,11 +14,27 @@ router.post('/dialog', async (req, res) => {
 })
 
 router.get('/dialog/', (req, res) => {
-    Dialog.find({users: req.query.userId}).populate('users')
-    .then(data => {
-        res.json(data)
-    }) 
- })
+    Dialog.find({
+            users: req.query.userId
+        }).populate({
+            path: 'users',
+            match: {
+                _id: {
+                    $ne: req.query.userId
+                }
+            },
+            select: '-studnumber -password -role'
+        })
+        .then(data => {
+            const dialog = data.map(x => {
+                return {
+                    id: x._id,
+                    user: x.users[0]
+                }
+            })
+            res.json(dialog);
+        })
+})
 
 router.post('/message', async (req, res) => {
     const newMessage = new Message({
@@ -32,9 +48,11 @@ router.post('/message', async (req, res) => {
 })
 
 router.get('/message/', (req, res) => {
-   Message.find({dialogId: req.query.dialogId}).then(data => {
-       res.json(data)
-   })
+    Message.find({
+        dialogId: req.query.dialogId
+    }).then(data => {
+        res.json(data)
+    })
 })
 
 module.exports = router;
