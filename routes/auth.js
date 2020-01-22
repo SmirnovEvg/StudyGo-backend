@@ -11,7 +11,7 @@ const User = require('../models/User');
 
 const {
     registerValidation
-} = require('../validation');
+} = require('../validation/validation');
 
 dotenv.config();
 
@@ -77,8 +77,17 @@ router.post('/register', async (req, res) => {
         const token = jwt.sign({
             _id: newUser._id
         }, process.env.TOKEN_SECRET);
+
+        const user = {
+            studnumber: newUser.studnumber,
+            firstName: newUser.firstName,
+            secondName: newUser.secondName,
+            thirdName: newUser.thirdName,
+            role: newUser.role
+        }
+
         res.json({
-            newUser,
+            user,
             token
         });
 
@@ -120,8 +129,17 @@ router.post('/register', async (req, res) => {
         const token = jwt.sign({
             _id: newUser._id
         }, process.env.TOKEN_SECRET);
+
+        const user = {
+            studnumber: newUser.studnumber,
+            firstName: newUser.firstName,
+            secondName: newUser.secondName,
+            thirdName: newUser.thirdName,
+            role: newUser.role
+        }
+
         res.json({
-            newUser,
+            user,
             token
         });
     } else {
@@ -135,21 +153,35 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({
         studnumber: req.body.studnumber
     });
-    
+
     if (!user) return res.status(400).send('Неверный логин или пароль');
 
     //Password is correct
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).send('Неверный логин или пароль');
+    try {
+        if (req.body.role === user.role) {
+            const token = jwt.sign({
+                _id: user._id
+            }, process.env.TOKEN_SECRET);
 
-    if (req.body.role === user.role) {
-        const token = jwt.sign({
-            _id: user._id
-        }, process.env.TOKEN_SECRET); //.env TOKEN_SECRET
-        res.json({
-            user,
-            token
-        });
+            const authUser = {
+                _id: user._id,
+                studnumber: user.studnumber,
+                firstName: user.firstName,
+                secondName: user.secondName,
+                thirdName: user.thirdName,
+                role: user.role
+            }
+
+            res.json({
+                authUser,
+                token
+            });
+
+        }
+    } catch (error) {
+        res.send(error)
     }
 })
 

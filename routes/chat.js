@@ -36,6 +36,24 @@ router.get('/dialog/', (req, res) => {
         })
 })
 
+router.get('/partnier/', (req, res) => {
+    Dialog.findOne({
+            _id: req.query.dialogId
+        }).populate({
+            path: 'users',
+            match: {
+                _id: {
+                    $ne: req.query.userId
+                }
+            },
+            select: 'firstName secondName _id'
+        })
+        .then(data => {
+            const user = data.users[0];
+            res.json(user);
+        })
+})
+
 router.post('/message', async (req, res) => {
     const newMessage = new Message({
         dialogId: req.body.dialogId,
