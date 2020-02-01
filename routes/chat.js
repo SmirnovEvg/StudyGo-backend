@@ -2,15 +2,16 @@ const router = require('express').Router();
 
 const Dialog = require('../models/Dialog');
 const Message = require('../models/Message');
+const User = require('../models/User');
 
-router.post('/dialog', async (req, res) => {
+router.post('/dialog', (req, res) => {
     const newDialog = new Dialog({
-        users: req.body.users,
+        users: [req.body.userId, req.body.partnerId],
         createTime: req.body.createTime
     })
     res.send(newDialog);
 
-    await newDialog.save();
+    newDialog.save();
 })
 
 router.get('/dialog/', (req, res) => {
@@ -32,11 +33,19 @@ router.get('/dialog/', (req, res) => {
                     user: x.users[0]
                 }
             })
-            res.json(dialog);
+            const partnerIds = data.map(x => {
+                return {
+                    id: x.users[0]._id
+                }
+            })
+            res.json({
+                dialog,
+                partnerIds
+            });
         })
 })
 
-router.get('/partnier/', (req, res) => {
+router.get('/partner/', (req, res) => {
     Dialog.findOne({
             _id: req.query.dialogId
         }).populate({
@@ -71,6 +80,33 @@ router.get('/message/', (req, res) => {
     }).then(data => {
         res.json(data)
     })
+})
+
+router.get('/users/', (req, res) => {
+    let arr = [];
+    for (var i = 0; i < req.query.partners.length; i++) {
+        arr.push(JSON.parse(req.query.partners[i]).id);
+    }  
+    
+    User.find({
+            _id: {
+                $not: {
+                    $in: arr
+                }
+            }
+        })
+        .select('-password -studnumber -thirdName')
+        .then(data => {
+            const searchStudentList = data.filter(item => {
+                return (item.firstName.toLowerCase().includes(req.query.searchText.toLowerCase()) || item.secondName.toLowerCase().includes(req.query.searchText.toLowerCase())) && item.role === 0
+            })
+
+            const searchTeacherList = data.filter(item => {
+                return (item.firstName.toLowerCase().includes(req.query.searchText.toLowerCase()) || item.secondName.toLowerCase().includes(req.query.searchText.toLowerCase())) && item.role === 1
+            })
+
+            res.json({searchStudentList, searchTeacherList})
+        })
 })
 
 module.exports = router;
