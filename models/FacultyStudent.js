@@ -25,6 +25,10 @@ const facultyStudentSchema = new mongoose.Schema({
     group: {
         type: Number,
         required: true,
+    },
+    groupPart: {
+        type: Number,
+        required: true,
     }
 });
 

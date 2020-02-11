@@ -13,7 +13,12 @@ const teacherSchema = new mongoose.Schema({
     rank: {
         type: String,
         required: true
-    }
+    },
+    subjects: [{
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Subject"
+    }],
 });
 
 module.exports = mongoose.model('Teacher', teacherSchema);

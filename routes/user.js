@@ -8,20 +8,35 @@ router.get('/', verify, async (req, res) => {
     const user = await User.findOne({
         _id: req.user._id
     });
-    if (user.role === 0) {
-        const student = await Student.findOne({
-            userId: user._id
-        }).populate('userId');
-        res.json({
-            student
-        });
-    } else if (user.role === 1) {
-        const teacher = await Teacher.findOne({
-            userId: user._id
-        }).populate('userId');
-        res.json({
-            teacher
-        });
+    switch (user.role) {
+        case 0:
+            const student = await Student.findOne({
+                userId: user._id
+            }).populate({
+                path: 'userId',
+                select: '-password'
+            });
+
+            res.send(
+                student
+            );
+            break;
+
+        case 1:
+            const teacher = await Teacher.findOne({
+                userId: user._id
+            }).populate({
+                path: 'userId',
+                select: '-password'
+            });
+
+            res.send(
+                teacher
+            );
+            break;
+
+        default:
+            break;
     }
 });
 
@@ -29,8 +44,6 @@ router.get('/info/', async (req, res) => {
     const user = await User.findOne({
         _id: req.query.userId
     }).select('-password -studnumber');
-    console.log(req.query);
-    
 
     if (user.role === 0) {
         const student = await Student.findOne({
@@ -43,6 +56,7 @@ router.get('/info/', async (req, res) => {
             thirdName: user.thirdName,
             course: student.course,
             group: student.group,
+            groupPart: student.groupPart,
             role: user.role
         });
     } else if (user.role === 1) {

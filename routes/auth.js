@@ -21,6 +21,7 @@ const saveStudent = async (userId, data) => {
         userId,
         course: data.course,
         group: data.group,
+        groupPart: data.groupPart,
     })
 
     await student.save();
