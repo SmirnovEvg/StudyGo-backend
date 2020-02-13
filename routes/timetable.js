@@ -70,4 +70,35 @@ router.get('/', (req, res) => {
     }
 })
 
+router.get('/day', (req, res) => {
+    try {
+        Timetable.find({
+                course: req.body.course,
+                group: req.body.group,
+                week: req.body.week,
+                dayOfTheWeek: req.body.dayOfTheWeek,
+                $or: [{
+                    groupPart: req.body.groupPart
+                }, {
+                    groupPart: 0
+                }]
+            })
+            .populate({
+                path: 'teacher',
+                select: 'firstName secondName thirdName'
+            })
+            .populate({
+                path: 'subject',
+                select: 'name'
+            })
+            .then(data => {
+                res.send(data);
+            })
+
+    } catch (error) {
+        console.log(error);
+
+    }
+})
+
 module.exports = router;
