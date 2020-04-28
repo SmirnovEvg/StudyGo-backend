@@ -18,12 +18,13 @@ router.post('/', (req, res) => {
             course: req.body.course,
             groupPart: req.body.groupPart,
         })
+        console.log(newTimetable);
 
         newTimetable.save();
 
         res.send(newTimetable);
     } catch (error) {
-        res.status(500).send('Server Error')
+        res.status(500).send(error)
     }
 });
 
@@ -97,8 +98,27 @@ router.get('/day', (req, res) => {
 
     } catch (error) {
         console.log(error);
-
     }
+})
+
+router.put('/', (req, res) => {
+    Timetable.findByIdAndUpdate({
+        _id: req.body.timetableId
+    }, {
+        teacher: req.body.teacher,
+        subject: req.body.subject,
+        classroomNumber: req.body.classroomNumber,
+        hall: req.body.hall,
+        week: req.body.week,
+        dayOfTheWeek: req.body.dayOfTheWeek,
+        classTime: req.body.classTime,
+        type: req.body.type,
+        group: req.body.group,
+        course: req.body.course,
+        groupPart: req.body.groupPart,
+    }).then(data => {
+        res.send(data)
+    })
 })
 
 module.exports = router;

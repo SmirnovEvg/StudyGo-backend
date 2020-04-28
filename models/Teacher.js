@@ -19,6 +19,10 @@ const teacherSchema = new mongoose.Schema({
         required: true,
         ref: "Subject"
     }],
+    additionals: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "AdditionalClasses"
+    }]
 });
 
 module.exports = mongoose.model('Teacher', teacherSchema);
