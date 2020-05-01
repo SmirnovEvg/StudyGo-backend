@@ -35,10 +35,10 @@ const timetableSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    group: {
+    group: [{
         type: Number,
         required: true
-    },
+    }],
     course: {
         type: Number,
         required: true
@@ -46,6 +46,10 @@ const timetableSchema = new mongoose.Schema({
     groupPart: {
         type: Number,
         default: 0
+    },
+    additional: {
+        type: Boolean,
+        required: true
     }
 });
 

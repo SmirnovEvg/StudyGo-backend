@@ -32,6 +32,22 @@ router.get('/', (req, res) => {
         })
 })
 
+router.get('/student', (req, res) => {
+    LaboratoryWork.find({
+            laboratoryclass: req.query.laboratoryClass,
+            student: req.query.student,
+        }).populate({
+            path: 'student',
+            select: '-studnumber -password -role',
+            populate: {
+                path: 'userId'
+            }
+        })
+        .then(data => {
+            res.status(200).send(data)
+        })
+})
+
 router.put('/', (req, res) => {
     LaboratoryWork.findByIdAndUpdate({
         _id: req.body.laboratoryId

@@ -3,7 +3,7 @@ const verify = require('./verifyToken');
 const Student = require('../models/Student');
 const User = require('../models/User');
 const Teacher = require('../models/Teacher');
-const AdditionalClasses = require('../models/AdditionalClasses');
+const Timetable = require('../models/Timetable');
 
 router.get('/', verify, async (req, res) => {
     const user = await User.findOne({
@@ -34,17 +34,27 @@ router.get('/', verify, async (req, res) => {
                 path: 'subjects'
             });
 
-            const additionals = await AdditionalClasses.find({
-                teacher: user._id
+            const additionalClasses = await Timetable.find({
+                teacher: user._id,
+                additional: true
             })
             .populate({
                 path: 'subject'
             })
-            teacher.additionals = additionals            
-
-            res.send(
-                teacher
-            );
+            res.json({
+                userId: {
+                    _id: teacher.userId._id,
+                    studnumber: teacher.userId.studnumber,
+                    firstName: teacher.userId.firstName,
+                    secondName: teacher.userId.secondName,
+                    thirdName: teacher.userId.thirdName,
+                    role: teacher.userId.role,
+                  },
+                subjects: teacher.subjects,
+                additionals: additionalClasses,
+                department: teacher.department,
+                rank: teacher.rank
+            });
             break;
 
         default:
@@ -75,8 +85,9 @@ router.get('/info/', async (req, res) => {
         const teacher = await Teacher.findOne({
             userId: user._id
         });
-        const additionals =  await AdditionalClasses.find({
-            teacher: user._id
+        const additionals =  await Timetable.find({
+            teacher: user._id,
+            additional: true
         })
         .populate({
             path: 'subject',
@@ -89,9 +100,10 @@ router.get('/info/', async (req, res) => {
                 subject: item.subject.name,
                 classroomNumber: item.classroomNumber,
                 hall: item.hall,
+                week: item.week,
                 dayOfTheWeek: item.dayOfTheWeek,
                 classTime: item.classTime,
-                groups: item.groups
+                group: item.group
             }
         })
         

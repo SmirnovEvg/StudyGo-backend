@@ -85,4 +85,29 @@ router.get('/teacher', (req, res) => {
     }
 })
 
+router.get('/student', (req, res) => {
+    try {        
+        LaboratoryClass.find({
+                course: req.query.course,
+                group: req.query.group,
+                groupPart: req.query.groupPart,
+            })
+            .populate({
+                path: 'subject',
+                select: 'name'
+            })
+            .populate({
+                path: 'students',
+                populate: {
+                    path: 'userId'
+                }
+            })
+            .then(data => {
+                res.status(200).send(data)
+            })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
 module.exports = router;

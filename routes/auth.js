@@ -28,11 +28,14 @@ const saveStudent = async (userId, data) => {
 }
 
 const saveTeacher = async (userId, data) => {
+    
     const teacher = new Teacher({
         userId,
         department: data.department,
         rank: data.rank,
+        subjects: data.subjects
     })
+    console.log(teacher);
 
     await teacher.save();
 }
