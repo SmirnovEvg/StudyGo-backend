@@ -58,4 +58,17 @@ router.put('/', (req, res) => {
     })
 })
 
+router.get('/allpassedstudentlaboratories', async (req, res) => {
+    try {
+        LaboratoryWork.find({
+            student: req.query.studentId,
+        })
+        .then(data => {
+            res.status(200).send({count: data.length})
+        })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
 module.exports = router;

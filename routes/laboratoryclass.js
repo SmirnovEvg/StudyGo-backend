@@ -22,15 +22,15 @@ router.post('/', (req, res) => {
                     teacher: req.body.teacher
                 })
                 newLaboratoryClass.save()
-                .then(labClass => {
-                    const newLaboratoryWork = new LaboratoryWork({
-                        laboratoryclass: labClass._id,
-                        student: labClass.students[0]._id,
-                        number: 0,
-                        passed: 0,
+                    .then(labClass => {
+                        const newLaboratoryWork = new LaboratoryWork({
+                            laboratoryclass: labClass._id,
+                            student: labClass.students[0]._id,
+                            number: 0,
+                            passed: 0,
+                        })
+                        newLaboratoryWork.save();
                     })
-                    newLaboratoryWork.save();
-                })
                 res.status(200).send(newLaboratoryClass);
             })
 
@@ -86,7 +86,7 @@ router.get('/teacher', (req, res) => {
 })
 
 router.get('/student', (req, res) => {
-    try {        
+    try {
         LaboratoryClass.find({
                 course: req.query.course,
                 group: req.query.group,
@@ -105,6 +105,27 @@ router.get('/student', (req, res) => {
             .then(data => {
                 res.status(200).send(data)
             })
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
+router.get('/allstudentlaboratories', async (req, res) => {
+    try {
+        if (req.query.studentId) {
+            let labCount = 0;
+            LaboratoryClass.find({
+                    students: req.query.studentId
+                })
+                .then(data => {
+                    for (let i = 0; i < data.length; i++) {
+                        labCount += data[i].count;
+                    }
+                    res.status(200).send({
+                        count: labCount
+                    })
+                })
+        }
     } catch (error) {
         res.status(500).send(error)
     }

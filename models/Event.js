@@ -13,6 +13,10 @@ const eventSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    image: {
+        type: String,
+        required: true
+    }
 });
 
 module.exports = mongoose.model('Event', eventSchema);

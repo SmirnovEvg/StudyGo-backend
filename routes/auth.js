@@ -28,14 +28,13 @@ const saveStudent = async (userId, data) => {
 }
 
 const saveTeacher = async (userId, data) => {
-    
+
     const teacher = new Teacher({
         userId,
         department: data.department,
         rank: data.rank,
         subjects: data.subjects
     })
-    console.log(teacher);
 
     await teacher.save();
 }
@@ -164,26 +163,51 @@ router.post('/login', async (req, res) => {
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) return res.status(400).send('Неверный логин или пароль');
     try {
-        if (req.body.role === user.role) {
-            const token = jwt.sign({
-                _id: user._id
-            }, process.env.TOKEN_SECRET);
+        if (!req.body.role) {
+            if (req.body.role === user.role) {
+                const token = jwt.sign({
+                    _id: user._id
+                }, process.env.TOKEN_SECRET);
 
-            const authUser = {
-                _id: user._id,
-                studnumber: user.studnumber,
-                firstName: user.firstName,
-                secondName: user.secondName,
-                thirdName: user.thirdName,
-                role: user.role
+                const authUser = {
+                    _id: user._id,
+                    studnumber: user.studnumber,
+                    firstName: user.firstName,
+                    secondName: user.secondName,
+                    thirdName: user.thirdName,
+                    role: user.role
+                }
+
+                res.json({
+                    authUser,
+                    token
+                });
+
             }
-
-            res.json({
-                authUser,
-                token
-            });
-
         }
+        else {
+            if (req.body.role === user.role || user.role === 2) {
+                const token = jwt.sign({
+                    _id: user._id
+                }, process.env.TOKEN_SECRET);
+
+                const authUser = {
+                    _id: user._id,
+                    studnumber: user.studnumber,
+                    firstName: user.firstName,
+                    secondName: user.secondName,
+                    thirdName: user.thirdName,
+                    role: user.role
+                }
+
+                res.json({
+                    authUser,
+                    token
+                });
+
+            }
+        }
+
     } catch (error) {
         res.send(error)
     }

@@ -78,7 +78,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/teacher', (req, res) => {
-    try {        
+    try {
         Timetable.find({
                 teacher: req.query.teacher,
             })
@@ -146,15 +146,45 @@ router.get('/additional', (req, res) => {
 router.get('/day', (req, res) => {
     try {
         Timetable.find({
-                course: req.body.course,
-                group: req.body.group,
-                week: req.body.week,
-                dayOfTheWeek: req.body.dayOfTheWeek,
+                course: req.query.course,
+                group: req.query.group,
+                week: req.query.week,
+                dayOfTheWeek: req.query.dayOfTheWeek,
                 $or: [{
-                    groupPart: req.body.groupPart
+                    groupPart: req.query.groupPart
                 }, {
                     groupPart: 0
                 }]
+            })
+            .sort({
+                classTime: 1
+            })
+            .populate({
+                path: 'teacher',
+                select: 'firstName secondName thirdName'
+            })
+            .populate({
+                path: 'subject',
+                select: 'name'
+            })
+            .then(data => {
+                res.send(data);
+            })
+
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get('/day/teacher', (req, res) => {
+    try {
+        Timetable.find({
+                teacher: req.query.teacher,
+                week: req.query.week,
+                dayOfTheWeek: req.query.dayOfTheWeek,
+            })
+            .sort({
+                classTime: 1
             })
             .populate({
                 path: 'teacher',
@@ -174,7 +204,9 @@ router.get('/day', (req, res) => {
 })
 
 router.put('/', (req, res) => {
-    Timetable.findByIdAndUpdate({
+    console.log(req.body);
+
+    Timetable.findOneAndUpdate({
         _id: req.body.timetableId
     }, {
         teacher: req.body.teacher,
@@ -189,6 +221,8 @@ router.put('/', (req, res) => {
         course: req.body.course,
         groupPart: req.body.groupPart,
         additional: req.body.additional
+    }, {
+        new: true
     }).then(data => {
         res.send(data)
     })
@@ -199,8 +233,8 @@ router.delete('/', (req, res) => {
         Timetable.deleteOne({
                 _id: req.body.id
             })
-            .then(() => {
-                res.status(200)
+            .then(data => {
+                res.status(200).send(data)
             })
     } catch (error) {
         res.status(500).send(error)
@@ -212,8 +246,8 @@ router.delete('/clear', (req, res) => {
         Timetable.deleteMany({
                 course: req.body.course
             })
-            .then(() => {
-                res.status(200)
+            .then(data => {
+                res.status(200).send(data)
             })
     } catch (error) {
         res.status(500).send(error)
