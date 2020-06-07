@@ -1,5 +1,8 @@
 const router = require('express').Router();
 const _ = require('lodash');
+const User = require('../models/User');
+const Subject = require('../models/Subject');
+
 
 const Timetable = require('../models/Timetable');
 
@@ -31,6 +34,51 @@ router.post('/', async (req, res) => {
             })
         res.status(200).send(newTimetableClass);
     } catch (error) {
+        res.status(500).send(error)
+    }
+});
+
+router.post('/import', async (req, res) => {
+    try {
+        const teacherInfo = req.body.teacher.split(' ');
+        const teacher = await User.findOne({
+            firstName: teacherInfo[1],
+            secondName: teacherInfo[0],
+            thirdName: teacherInfo[2],
+        });
+
+        const subject = await Subject.findOne({
+            name: req.body.subject
+        });
+        
+        const newTimetable = new Timetable({
+            teacher: teacher._id,
+            subject: subject.id,
+            classroomNumber: req.body.classroomNumber,
+            hall: req.body.hall,
+            week: req.body.week,
+            dayOfTheWeek: req.body.dayOfTheWeek,
+            classTime: req.body.classTime,
+            type: req.body.type,
+            group: req.body.group,
+            course: req.body.course,
+            groupPart: req.body.groupPart,
+            additional: req.body.additional
+        })
+
+        await newTimetable.save();
+
+        const newTimetableClass = await Timetable.findOne({
+                _id: newTimetable._id
+            })
+            .populate({
+                path: 'subject',
+                select: 'name'
+            })
+        res.status(200).send(newTimetableClass);
+    } catch (error) {
+        console.log(error);
+        
         res.status(500).send(error)
     }
 });

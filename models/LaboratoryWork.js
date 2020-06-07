@@ -17,6 +17,12 @@ const laboratoryWorkSchema = new mongoose.Schema({
     passed: {
         type: Number,
     },
+    visit: {
+        type: String,
+    },
+    description: {
+        type: String,
+    }
 });
 
 module.exports = mongoose.model('laboratoryWork', laboratoryWorkSchema);

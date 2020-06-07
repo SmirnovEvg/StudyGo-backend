@@ -12,6 +12,9 @@ const laboratoryTimeSchema = new mongoose.Schema({
     date: {
         type: Date,
     },
+    name: {
+        type: String,
+    }
 });
 
 module.exports = mongoose.model('laboratoryTime', laboratoryTimeSchema);

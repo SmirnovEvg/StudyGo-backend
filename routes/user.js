@@ -106,6 +106,7 @@ router.get('/info/', async (req, res) => {
         })
 
         res.json({
+            id: teacher._id,
             firstName: user.firstName,
             secondName: user.secondName,
             thirdName: user.thirdName,
@@ -128,6 +129,19 @@ router.get('/teachers', async (req, res) => {
             }]
         }).select('-password -studnumber');
         res.status(200).send(teachers);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+})
+
+router.put('/teacher', async (req, res) => {
+    try {
+        const teacher = await Teacher.findOneAndUpdate({
+            userId: req.body.teacherId
+        },{
+            subjects: req.body.subjects
+        })
+        res.send(teacher)
     } catch (error) {
         res.status(500).send(error);
     }
