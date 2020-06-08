@@ -252,8 +252,6 @@ router.get('/day/teacher', (req, res) => {
 })
 
 router.put('/', (req, res) => {
-    console.log(req.body);
-
     Timetable.findOneAndUpdate({
         _id: req.body.timetableId
     }, {

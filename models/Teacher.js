@@ -22,7 +22,10 @@ const teacherSchema = new mongoose.Schema({
     additionals: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "AdditionalClasses"
-    }]
+    }],
+    image: {
+        type: String,
+    }
 });
 
 module.exports = mongoose.model('Teacher', teacherSchema);
